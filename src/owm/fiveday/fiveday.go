@@ -1,5 +1,13 @@
 package fiveday
 
+import (
+    "bytes"
+    "encoding/json"
+    "fmt"
+    "io"
+    "io/ioutil"
+)
+
 type Volume map[string]float64
 
 type Wind struct {
@@ -58,4 +66,35 @@ type Data struct {
     City City
     Cnt int
     List []Item
+}
+
+func (fiveDayData *Data) FromReader(reader io.Reader) {
+    decoder := json.NewDecoder(reader)
+
+    err := decoder.Decode(fiveDayData)
+
+    if err != nil {
+        fmt.Println("DECODE ERROR:", err)
+    }
+}
+
+func (fiveDayData *Data) FromFile(filename string) {
+    content, err := ioutil.ReadFile(filename)
+    if err != nil {
+        fmt.Println("FILE READ ERROR:", err)
+    }
+
+    fiveDayData.FromReader(io.Reader(bytes.NewBuffer(content)))
+}
+
+func (fiveDayData *Data) ToJson() string {
+    var buffer bytes.Buffer
+    encoder := json.NewEncoder(io.Writer(&buffer))
+    err := encoder.Encode(fiveDayData)
+    if err == nil {
+        return buffer.String()
+    } else {
+        fmt.Println("ENCODE ERROR:", err)
+        return "ERROR"
+    }
 }
