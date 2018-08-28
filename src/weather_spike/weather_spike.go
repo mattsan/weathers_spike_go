@@ -7,15 +7,19 @@ import (
     "owm/fiveday"
 )
 
-func printFiveDayData(fiveDayData fiveday.Data) {
+func printFiveDayData(forecastData fiveday.Data) {
     encoder := json.NewEncoder(os.Stdout)
-    encoder.Encode(fiveDayData)
+    encoder.Encode(forecastData)
 }
 
 func main() {
     filename := os.Args[1]
-    var fiveDayData fiveday.Data
-    fiveDayData.FromFile(filename)
+    var forecastData fiveday.Data
+    forecastData.FromFile(filename)
 
-    fmt.Println(fiveDayData.ToJson())
+    if json, err := forecastData.ToJson(); err == nil {
+        fmt.Println(json)
+    } else {
+        fmt.Println("error:", err)
+    }
 }
