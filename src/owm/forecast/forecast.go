@@ -1,4 +1,4 @@
-package fiveday
+package forecast
 
 import (
     "bytes"
